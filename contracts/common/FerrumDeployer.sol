@@ -6,6 +6,8 @@ import "./IFerrumDeployer.sol";
 import "./IVersioned.sol";
 import "hardhat/console.sol";
 
+// DEPRECATED: Use CreateX pattern instead
+// Contracts in this repo have also been replaced with upgradeable versions, so won't work with this contract
 contract FerrumDeployer is IFerrumDeployer, IVersioned {
 	string constant public override VERSION = "0.0.1";
     uint256 constant EXTERNAL_HASH = 0x0ddafcd8600839ce553cacb17e362c83ea42ccfd1e8c8b3cb4d075124196dfc0;

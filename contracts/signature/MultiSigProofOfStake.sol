@@ -1,13 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "../staking/interfaces/IStakeInfo.sol";
-import "../common/Freezable.sol";
-import "./MultiSigCheckable.sol";
+import {IStakeInfo} from "../staking/interfaces/IStakeInfo.sol";
+import {Freezable} from "../common/Freezable.sol";
+import {MultiSigCheckable} from "./MultiSigCheckable.sol";
+
 
 abstract contract MultiSigProofOfStake is Freezable, MultiSigCheckable {
-    address public staking;
-    address public stakedToken;
+    /// custom:storage-location erc7201:ferrum.storage.multisigproofofstake.001
+    struct MultiSigProofOfStakeStorageV001 {
+        address staking;
+        address stakedToken;
+    }
+
+    // keccak256(abi.encode(uint256(keccak256("ferrum.storage.multisigproofofstake.001")) - 1)) & ~bytes32(uint256(0xff))
+    bytes32 private constant MultiSigProofOfStakeStorageV001Location = 0x58ae65de03eeb1bbd6533ac656349a2ed5a7fb475536f542d8ff1ca3ddc53300;
+
+    function _getMultiSigProofOfStakeStorageV001() internal pure returns (MultiSigProofOfStakeStorageV001 storage $) {
+        assembly {
+            $.slot := MultiSigProofOfStakeStorageV001Location
+        }
+    }
 
     /**
      @notice Sets the stake contract and its token. Only admin can call this function
@@ -17,8 +30,10 @@ abstract contract MultiSigProofOfStake is Freezable, MultiSigCheckable {
     function setStake(address stakingContract, address _stakedToken) external onlyAdmin freezable {
         require(stakingContract != address(0), "MSPS: stakingContract required");
         require(_stakedToken != address(0), "MSPS: _stakedToken required");
-        staking = stakingContract;
-        stakedToken = _stakedToken;
+
+        MultiSigProofOfStakeStorageV001 storage $ = _getMultiSigProofOfStakeStorageV001();
+        $.staking = stakingContract;
+        $.stakedToken = _stakedToken;
     }
 
     /**
@@ -36,19 +51,22 @@ abstract contract MultiSigProofOfStake is Freezable, MultiSigCheckable {
         uint64 expectedGroupId,
         bytes memory multiSignature
     ) internal {
+        MultiSigProofOfStakeStorageV001 storage $ = _getMultiSigProofOfStakeStorageV001();
+        MultiSigCheckableStorageV001 storage $$ = _getMultiSigCheckableStorageV001();
+
         require(multiSignature.length != 0, "MSPS: multiSignature required");
         bytes32 digest = _hashTypedDataV4(message);
         bool result;
         address[] memory signers;
         (result, signers) = tryVerifyDigestWithAddress(digest, expectedGroupId, multiSignature);
         require(result, "MSPS: Invalid signature");
-        require(!usedHashes[salt], "MSPS: Message digest already used");
-        usedHashes[salt] = true;
+        require(!$$.usedHashes[salt], "MSPS: Message digest already used");
+        $$.usedHashes[salt] = true;
 
-        address _staking = staking;
+        address _staking = $.staking;
         if (_staking != address(0)) {
             // Once all signatures are verified, make sure we have the staked ratio covered
-            address token = stakedToken;
+            address token = $.stakedToken;
             uint256 stakedTotal = IStakeInfo(_staking).stakedBalance(token);
             uint256 signersStake;
             for(uint256 i=0; i < signers.length; i++) {
