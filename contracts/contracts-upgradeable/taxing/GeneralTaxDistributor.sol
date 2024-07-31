@@ -71,6 +71,16 @@ contract GeneralTaxDistributor is Initializable, UUPSUpgradeable, WithAdmin, IGe
         }
     }
 
+    function globalTargetConfig() external view returns (TargetConfig memory) {
+        GeneralTaxDistributorStorageV001 storage $ = _getGeneralTaxDistributorStorageV001();
+        return $.globalTargetConfig;
+    }
+
+    function targetInfos(uint256 idx) external view returns (TargetInfo memory) {
+        GeneralTaxDistributorStorageV001 storage $ = _getGeneralTaxDistributorStorageV001();
+        return $.targetInfos[idx];
+    }
+
     function turnRandomization(uint8 off) external onlyAdmin {
         require(off == 1 || off == 0, "GTD: invalid off");
         GeneralTaxDistributorStorageV001 storage $ = _getGeneralTaxDistributorStorageV001();

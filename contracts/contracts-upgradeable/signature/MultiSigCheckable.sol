@@ -72,6 +72,26 @@ abstract contract MultiSigCheckable is WithAdmin, EIP712Upgradeable {
         }
     }
 
+    function quorums(address quorumId) external view returns (Quorum memory) {
+        MultiSigCheckableStorageV001 storage $ = _getMultiSigCheckableStorageV001();
+        return $.quorums[quorumId];
+    }
+
+    function quorumList(uint256 index) external view returns (address) {
+        MultiSigCheckableStorageV001 storage $ = _getMultiSigCheckableStorageV001();
+        return $.quorumList[index];
+    }
+
+    function quorumSubscriptions(address _address) external view returns (Quorum memory) {
+        MultiSigCheckableStorageV001 storage $ = _getMultiSigCheckableStorageV001();
+        return $.quorumSubscriptions[_address];
+    }
+
+    function quorumsSubscribers(address quorumId) external view returns (uint256) {
+        MultiSigCheckableStorageV001 storage $ = _getMultiSigCheckableStorageV001();
+        return $.quorumsSubscribers[quorumId];
+    }
+
     /**
      @notice Force remove from quorum (if managed)
         to allow last resort option in case a quorum

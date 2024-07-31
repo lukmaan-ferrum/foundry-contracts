@@ -1,8 +1,11 @@
 import { ethers } from "hardhat";
 import { deployUsingDeployer, getCtx, getTransactionLog, Salt, Wei, ZeroAddress } from "../common/Utils";
-import { FerrumProxyTokenDeployer } from '../../typechain-types/FerrumProxyTokenDeployer';
-import { GenericUpgradableTokenMintable } from '../../typechain-types/GenericUpgradableTokenMintable';
-import { TransparentUpgradeableProxy } from '../../typechain-types/TransparentUpgradeableProxy';
+import { 
+	FerrumProxyTokenDeployer,
+	GenericUpgradableTokenMintable,
+	TransparentUpgradeableProxy
+} from '../../typechain-types';
+
 
 /*
 Scanario:
@@ -33,15 +36,15 @@ describe('TestTokenDeployer', function (){
 
 		console.log('Deploying the deployer');
 		const depFac = await ethers.getContractFactory('FerrumProxyTokenDeployer');
-		const dep = await depFac.deploy() as FerrumProxyTokenDeployer;
-		const deped = await dep.deployToken(gut.address, 'Test tokoon', 'TTN', '200000000000000000000', '0x880E0f3c6641C7fd4804136781F9632C0738038f');
+		const dep = await depFac.deploy() as unknown as FerrumProxyTokenDeployer;
+		const deped = await dep.deployToken(gut, 'Test tokoon', 'TTN', '200000000000000000000', '0x880E0f3c6641C7fd4804136781F9632C0738038f');
 
 		if (1===1) { return; }
 		// const deped = await dep.deployToken(gut.address, 'Test tokoon', 'TTN', Wei.from('10'), ctx.owner);
 		const log = await getTransactionLog(deped.hash, dep, 'TokenDeployed');
 		console.log('TOKEN Deploted to ', log.token)
 		const tFac = await ethers.getContractFactory('GenericUpgradableTokenMintable');
-		const tok = await tFac.attach(log.token) as GenericUpgradableTokenMintable;
+		const tok = await tFac.attach(log.token) as unknown as GenericUpgradableTokenMintable;
 
 		console.log(`Token owner is `, await tok.connect(ctx.signers.acc1).owner());
 		console.log(`Token total supply is ${Wei.to((await tok.connect(ctx.signers.acc1).totalSupply()).toString())}`);
@@ -50,7 +53,7 @@ describe('TestTokenDeployer', function (){
 		console.log('Now upgrading....', data);
 
 		const upgFac = await ethers.getContractFactory('TransparentUpgradeableProxy');
-		const upg = upgFac.attach(log.token) as TransparentUpgradeableProxy;
+		const upg = upgFac.attach(log.token) as unknown as TransparentUpgradeableProxy;
 		console.log('Just upgrade')
 		// await upg.upgradeTo(gutm.address);
 		console.log('Just upgrade and call')
