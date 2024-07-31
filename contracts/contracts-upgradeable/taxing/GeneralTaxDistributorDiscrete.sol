@@ -46,12 +46,15 @@ contract GeneralTaxDistributorDiscrete is GeneralTaxDistributor {
         uint256 remaining = balance;
         uint256 w = target.weights;
         for (uint8 i = 0; i < target.len; i++) {
-            uint8 mi = 8 * i;
-            uint256 mask = 0xff << mi;
-            uint256 poolRatio = mask & w;
-            poolRatio = poolRatio >> mi;
+            uint256 amount;
+            { // scope to avoid stack too deep
+                uint8 mi = 8 * i;
+                uint256 mask = 0xff << mi;
+                uint256 poolRatio = mask & w;
+                poolRatio = poolRatio >> mi;
+                amount = poolRatio * balance / target.totalW;
+            }
 
-            uint256 amount = poolRatio * balance / target.totalW;
             if (remaining > amount) {
                 remaining -= amount;
             } else {
