@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-import "./GeneralTaxDistributor.sol";
+pragma solidity ^0.8.24;
+
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {GeneralTaxDistributor} from "./GeneralTaxDistributor.sol";
+
 
 /**
  * General tax distributor.
@@ -25,18 +28,19 @@ contract GeneralTaxDistributorDiscrete is GeneralTaxDistributor {
         address origin
     ) internal returns (uint256) {
         // Check balance, if less than buffer
-        TokenInfo memory ti = tokenInfo[token];
+        GeneralTaxDistributorStorageV001 storage $ = _getGeneralTaxDistributorStorageV001();
+        TokenInfo memory ti = $.tokenInfo[token];
         uint256 balance = IERC20(token).balanceOf(address(this));
         if (balance < ti.bufferSize) {
             return 0;
         }
 
         TargetConfig memory target = ti.tokenSpecificConfig != 0
-            ? tokenTargetConfigs[token]
-            : globalTargetConfig;
+            ? $.tokenTargetConfigs[token]
+            : $.globalTargetConfig;
         if (target.len == 0) {
             ti.tokenSpecificConfig = 0;
-            target = globalTargetConfig;
+            target = $.globalTargetConfig;
         }
 
         uint256 remaining = balance;
