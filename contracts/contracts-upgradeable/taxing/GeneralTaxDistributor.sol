@@ -4,11 +4,11 @@ pragma solidity ^0.8.24;
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {UUPSUpgradeable, Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import {IGeneralTaxDistributor} from "./IGeneralTaxDistributor.sol";
-import {RandomHelper} from "../math/RandomHelper.sol";
-import {IBurnable} from "../common/IBurnable.sol";
+import {IGeneralTaxDistributor} from "../../contracts/taxing/IGeneralTaxDistributor.sol";
+import {RandomHelper} from "../../contracts/math/RandomHelper.sol";
+import {IBurnable} from "../../contracts/common/IBurnable.sol";
 import {WithAdmin} from "../common/WithAdmin.sol";
-import {IRewardPool} from "../staking/interfaces/IRewardPool.sol";
+import {IRewardPool} from "../../contracts/staking/interfaces/IRewardPool.sol";
 
 
 /**

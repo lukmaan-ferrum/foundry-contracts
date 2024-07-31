@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import {EIP712Upgradeable} from "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import {WithAdmin} from "../common/WithAdmin.sol";
-import {MultiSigLib} from "./MultiSigLib.sol";
+import {MultiSigLib} from "../../contracts/signature/MultiSigLib.sol";
 
 
 /**

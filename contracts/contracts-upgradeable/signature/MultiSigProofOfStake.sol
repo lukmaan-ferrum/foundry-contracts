@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IStakeInfo} from "../staking/interfaces/IStakeInfo.sol";
+import {IStakeInfo} from "../../contracts/staking/interfaces/IStakeInfo.sol";
 import {Freezable} from "../common/Freezable.sol";
 import {MultiSigCheckable} from "./MultiSigCheckable.sol";
 

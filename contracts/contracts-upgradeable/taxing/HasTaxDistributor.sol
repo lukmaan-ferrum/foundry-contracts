@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "./IHasTaxDistributor.sol";
+import "../../contracts/taxing/IHasTaxDistributor.sol";
 
 /**
  @notice A contract that uses tax distributer
