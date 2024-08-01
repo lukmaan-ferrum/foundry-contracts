@@ -28,7 +28,7 @@ async function context() {
     console.log('Starting ctx', data);
     const daoToken = await deployWithOwner(ctx, 'DaoMintableErc20', ctx.owner, data) as unknown as DaoMintableErc20;
     console.log('DAO Token mited ', await daoToken.getAddress());
-    const dao = await deployWithOwner(ctx, 'TokenDao', ctx.owner, '0x') as unknown as TokenDao;
+    const dao = await deployWithOwner(ctx, 'contracts/contracts/signature/TokenDao.sol:TokenDao', ctx.owner, '0x') as unknown as TokenDao;
     console.log('Minted token DAO', await dao.getAddress());
     await dao.setToken(daoToken);
     return {

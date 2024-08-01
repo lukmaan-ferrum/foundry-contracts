@@ -2,13 +2,13 @@
 pragma solidity ^0.8.24;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {GeneralTaxDistributor} from "./GeneralTaxDistributor.sol";
+import {GeneralTaxDistributorUpgradable} from "./GeneralTaxDistributorUpgradeable.sol";
 
 
 /**
  * General tax distributor.
  */
-contract GeneralTaxDistributorDiscrete is GeneralTaxDistributor {
+contract GeneralTaxDistributorDiscrete is GeneralTaxDistributorUpgradable {
 
     function distributeTaxDirect(address token
     ) external override returns (uint256) {

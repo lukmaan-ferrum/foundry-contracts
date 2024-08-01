@@ -14,7 +14,7 @@ import {IRewardPool} from "../../contracts/staking/interfaces/IRewardPool.sol";
 /**
  * General tax distributor.
  */
-contract GeneralTaxDistributor is Initializable, UUPSUpgradeable, WithAdmin, IGeneralTaxDistributor {
+contract GeneralTaxDistributorUpgradable is Initializable, UUPSUpgradeable, WithAdmin, IGeneralTaxDistributor {
     using SafeERC20 for IERC20;
     enum TargetType {
         NotSet,

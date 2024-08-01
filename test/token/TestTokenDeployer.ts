@@ -21,17 +21,15 @@ describe('TestTokenDeployer', function (){
 	it('Can deploy a token, then upgrade it', async function() {
 		const ctx = await getCtx();
 
-		console.log('Deploying logic contracts');
-
 		console.log('Deploying logic tokens');
 		const gut = await deployUsingDeployer(
 			'GenericUpgradableToken', ZeroAddress, '0x',
-			ctx.deployer.address, Salt);
+			await ctx.deployer.getAddress(), Salt);
 		console.log("GenericUpgradableToken:", gut.address);
 
 		const gutm = await deployUsingDeployer(
 			'GenericUpgradableTokenMintable', ZeroAddress, '0x',
-			ctx.deployer.address, Salt);
+			await ctx.deployer.getAddress(), Salt);
 		console.log("GenericUpgradableTokenMintable:", gutm.address);
 
 		console.log('Deploying the deployer');

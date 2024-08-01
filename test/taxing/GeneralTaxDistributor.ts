@@ -22,12 +22,12 @@ describe('GeneralTaxDistributor', function (){
 		// 0 threshol means always random returns true.
 		const ranThresholdX1000 = 500;
 		const gtd = await deployWithOwner(
-			ctx, 'GeneralTaxDistributor', ctx.owner, abi.encode(['uint256'], [ranThresholdX1000])) as unknown as GeneralTaxDistributor;
+			ctx, 'contracts/contracts/taxing/GeneralTaxDistributor.sol:GeneralTaxDistributor', ctx.owner, abi.encode(['uint256'], [ranThresholdX1000])) as unknown as GeneralTaxDistributor;
 		await ctx.token!.transfer(gtd, Wei.from('2'));
-		console.log('GTD balance is', await Wei.bal(await ctx.token.getAddress(), await gtd.getAddress()));
+		console.log('GTD balance is', await Wei.bal(ctx.token, await gtd.getAddress()));
 
-		console.log(`About to dist tax. It should fail because we are not allowed to do this.`);
-		await throws(gtd.distributeTaxDirect(ctx.token), 'GTD: Not allowed');
+		console.log(`About to dist tax. It should fail because targetInfos have no been set, so tries to access out-of-bounds element in targetInfos array.`);
+		await throws(gtd.distributeTaxDirect(ctx.token), 'GTD: invalid idx');
 
 		// Now do a global config and thigs should be fine
 		const infos: { tgt: string; tType: BigNumberish }[] = [];
@@ -45,7 +45,7 @@ describe('GeneralTaxDistributor', function (){
 
 		console.log('Now lets distribute the tax');
 		await gtd.distributeTaxDirect(ctx.token);
-		console.log('Post tax dist: ', await Wei.bal(await ctx.token.getAddress(), ctx.acc2));
+		console.log('Post tax dist: ', await Wei.bal(ctx.token, ctx.acc2));
 
 		await validateBalances(ctx.token, [[ctx.owner, '0'], [ctx.acc1, '0'], [ctx.acc2, '0'] ], 'PRE');
 		let totalSup = Wei.to(await ctx.token!.totalSupply());
@@ -53,7 +53,7 @@ describe('GeneralTaxDistributor', function (){
 		// Run in a loop
 		for (let i=0; i<20; i++) {
 			await ctx.token!.transfer(gtd, Wei.from('2'));
-			await gtd.distributeTaxDirect(ctx.token.address);
+			await gtd.distributeTaxDirect(ctx.token);
 			totalSup = Wei.to(await ctx.token!.totalSupply());
 			console.log(`POST - Total Supply is ${totalSup}`);
 			await validateBalances(ctx.token, [[ctx.owner, '0'], [ctx.acc1, '0'], [ctx.acc2, '0'] ], 'POST');
@@ -69,7 +69,7 @@ describe('GeneralTaxDistributor', function (){
 				randomCaller = randomCaller.substr(0, i) + (i%16).toString(16) + randomCaller.substr(i+1);
 			}
 			console.log('RANDOM CALLER', randomCaller)
-			const tx = await gtd.distributeTax(ctx.token.address);
+			const tx = await gtd.distributeTax(await ctx.token.getAddress());
 			console.log('Gas used: ', await getGasLimit(tx));
 			totalSup = Wei.to(await ctx.token!.totalSupply());
 			console.log(`POST - Total Supply is ${totalSup}`);
